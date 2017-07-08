@@ -1,9 +1,9 @@
-const React = require('react');
-const renderToString = require('react-dom/server').renderToString;
+import * as React from 'react';
+import { renderToString } from 'react-dom/server';
+
 const App = require('./components/App');
 
-
-module.exports = function serverRenderer({ clientStats, serverStats, foo }) {
+export default function serverRenderer({ clientStats, serverStats, foo }) {
     return (req, res, next) => {
         res.status(200).send(`
             <!doctype html>
@@ -19,3 +19,4 @@ module.exports = function serverRenderer({ clientStats, serverStats, foo }) {
         `);
     };
 }
+

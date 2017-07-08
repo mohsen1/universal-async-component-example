@@ -1,6 +1,8 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
-const App = require('./components/App.js');
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+
+import App from './components/App';
+
 const AppContainer = require('react-hot-loader').AppContainer;
 
 const render = (Component) => {
@@ -12,9 +14,11 @@ const render = (Component) => {
 
 render(App);
 
+declare var module: NodeModule & { hot: any };
+
 if (module.hot) {
-    module.hot.accept('./components/App.js', () => {
-        render(require('./components/App.js'));
+    module.hot.accept('./components/App.tsx', () => {
+        render(require('./components/App.tsx'));
     });
 }
 
