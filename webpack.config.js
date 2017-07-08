@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 const dist = path.join(__dirname, 'dist');
 
+/** @type {Array<webpack.Configuration>} */
 module.exports = [
     {
         name: 'client',
@@ -12,11 +13,14 @@ module.exports = [
             'webpack-hot-middleware/client',
             './client',
         ],
+        resolve: {
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
         module: {
             rules: [
                 {
-                    test: /\.jsx?$/,
-                    loaders: ['react-hot-loader/webpack']
+                    test: /\.(j|t)sx?$/,
+                    loaders: ['react-hot-loader/webpack', 'ts-loader']
                 }
             ]
         },
