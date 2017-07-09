@@ -47,14 +47,15 @@ export const clientConfig: Configuration = {
     name: 'client',
     target: 'web',
     get entry() {
+        const entry = ['./src/client']
         if (process.env.NODE_ENV === 'development') {
             return [
                 'react-hot-loader/patch',
                 'webpack-hot-middleware/client',
-                './client',
+                ...entry,
             ];
         }
-        return './client';
+        return entry;
     },
     resolve,
     module: { rules },
@@ -67,7 +68,7 @@ export const clientConfig: Configuration = {
     get plugins() {
         const basePlugins = [
             new htmlWebpackPlugin({
-                template: './index.html',
+                template: './src/index.html',
                 inject: 'body',
                 minify: process.env.NODE_ENV === 'production' ? htmlMinifyConfig : false,
                 hash: false,
@@ -95,7 +96,7 @@ export const clientConfig: Configuration = {
 const serverConfig: Configuration = {
     name: 'server',
     target: 'node',
-    entry: './server',
+    entry: './src/server',
     resolve,
     module: { rules, },
     externals: [nodeExternals()],
