@@ -3,7 +3,7 @@ import * as webpack from 'webpack';
 import * as _ from 'lodash';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
-const {StatsWriterPlugin} = require('webpack-stats-plugin');
+const { StatsWriterPlugin } = require('webpack-stats-plugin');
 
 const dist = path.join(__dirname, 'dist');
 

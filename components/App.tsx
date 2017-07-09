@@ -1,3 +1,3 @@
-const React = require('react');
+import * as React from 'react';
 
 export default () => <h1>Hello world!</h1>

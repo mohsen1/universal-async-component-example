@@ -31,8 +31,6 @@ export default function serverRenderer({ clientStats, serverStats }: ServerRende
         // populate the app content...
         $('#root').html(renderToString(<App />));
 
-        $('title').text('App title'); // Placeholder for ssr helmet
-
         res.status(200).send($.html());
     };
 }
