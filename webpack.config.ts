@@ -1,5 +1,7 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
+import * as _ from 'lodash';
+import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
 
 const dist = path.join(__dirname, 'dist');
@@ -7,10 +9,13 @@ const dist = path.join(__dirname, 'dist');
 const rules: webpack.Rule[] = [
     {
         test: /(\.ts|\.tsx)$/,
-        loaders: [
-            'react-hot-loader/webpack',
-            'ts-loader',
-        ],
+        get loaders() {
+            const loaders = ['ts-loader'];
+            if (process.env.NODE_ENV === 'development') {
+                loaders.unshift('react-hot-loader/webpack');
+            }
+            return loaders;
+        },
         include: __dirname,
     },
     {
@@ -25,6 +30,14 @@ const resolve: webpack.Resolve = {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
 };
 
+const htmlMinifyConfig: htmlWebpackPlugin.MinifyConfig = {
+    minifyCSS: true,
+    minifyJS: false,
+    removeComments: true,
+    collapseInlineTagWhitespace: true,
+    collapseWhitespace: true,
+}
+
 interface Configuration extends webpack.Configuration {
     name: string;
 }
@@ -32,24 +45,48 @@ interface Configuration extends webpack.Configuration {
 export const clientConfig: Configuration = {
     name: 'client',
     target: 'web',
-    entry: [
-        'react-hot-loader/patch',
-        'webpack-hot-middleware/client',
-        './client',
-    ],
+    get entry() {
+        if (process.env.NODE_ENV === 'development') {
+            return [
+                'react-hot-loader/patch',
+                'webpack-hot-middleware/client',
+                './client',
+            ];
+        }
+        return './client';
+    },
     resolve,
     module: { rules },
     output: {
         path: dist,
         filename: 'client.js',
-        publicPath: '/assets/'
+        publicPath: '/assets/', // TODO: use process.env.PUBLIC_PATH or something
     },
     devtool: 'source-map',
-    plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-        // new webpack.NoErrorsPlugin(),
-    ]
+    get plugins() {
+        const basePlugins = [
+            new htmlWebpackPlugin({
+                template: './index.html',
+                inject: 'body',
+                minify: process.env.NODE_ENV === 'production' ? htmlMinifyConfig : false,
+                hash: false,
+                showErrors: process.env.NODE_ENV === 'development',
+            }),
+
+            // new webpack.ProvidePlugin({
+            //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
+            // }),
+        ];
+        if (process.env.NODE_ENV === 'development') {
+            return [
+                ...basePlugins,
+                new webpack.HotModuleReplacementPlugin(),
+                new webpack.NamedModulesPlugin(),
+                // new webpack.NoErrorsPlugin(),
+            ];
+        }
+        return basePlugins;
+    },
 };
 
 const serverConfig: Configuration = {
@@ -58,7 +95,7 @@ const serverConfig: Configuration = {
     entry: './server',
     resolve,
     module: { rules, },
-    // externals: [nodeExternals()],
+    externals: [nodeExternals()],
     output: {
         path: dist,
         filename: 'server.js',
