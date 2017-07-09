@@ -17,7 +17,7 @@ declare var module: NodeModule & { hot: any };
 
 if (module.hot) {
     module.hot.accept('./components/App.tsx', () => {
-        render(require('./components/App.tsx'));
+        render(require('./components/App.tsx').default);
     });
 }
 

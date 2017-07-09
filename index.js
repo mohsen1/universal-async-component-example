@@ -18,8 +18,8 @@ const devMiddleware = webpackDevMiddleware(compiler, {
 });
 
 app.use(devMiddleware);
-app.use(webpackHotServerMiddleware(compiler));
 app.use(webpackHotMiddleWare(clientCompiler));
+app.use(webpackHotServerMiddleware(compiler));
 
 app.listen(6060, () => {
 	console.log('Server started: http://localhost:6060/');
