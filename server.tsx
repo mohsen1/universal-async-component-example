@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
 
-const App = require('./components/App');
+import App from './components/App';
 
 export default function serverRenderer({ clientStats, serverStats, foo }) {
     return (req, res, next) => {
@@ -12,7 +12,7 @@ export default function serverRenderer({ clientStats, serverStats, foo }) {
                 <title>${foo}</title>
             </head>
             <body>
-                <div id="root">${renderToString(React.createElement(App))}</div>
+                <div id="root">${renderToString(<App />)}</div>
                 <script src="/assets/client.js"></script>
             </body>
             </html>

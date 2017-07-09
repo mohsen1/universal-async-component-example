@@ -10,24 +10,16 @@ require('ts-node/register');
 const { default: configs, clientConfig } = require('./webpack.config');
 
 const compiler = webpack(configs);
-const clientCompiler = compiler.compilers.find(compiler => compiler.name === 'client');
+const clientCompiler = compiler.compilers.find(({ name }) => name === 'client');
 
-const devMiddleware = webpackDevMiddleware(clientCompiler, {
-	// noInfo: true,
+const devMiddleware = webpackDevMiddleware(compiler, {
+	noInfo: true,
 	publicPath: clientConfig.output.publicPath
 });
 
 app.use(devMiddleware);
-app.use((req, res, next) => {
-    devMiddleware.waitUntilValid((stats) => {
-		console.log('Dev middleware is valid. hooking hot middleware');
-		if (stats.hasErrors) {
-			console.error(stats.toString('errors-only'));
-		}
-		webpackHotServerMiddleware(req, res, next);
-		webpackHotMiddleWare(clientCompiler)(req, res, next);
-	});
-});
+app.use(webpackHotServerMiddleware(compiler));
+app.use(webpackHotMiddleWare(clientCompiler));
 
 app.listen(6060, () => {
 	console.log('Server started: http://localhost:6060/');

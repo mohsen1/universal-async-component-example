@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
 
 import App from './components/App';
 
-const AppContainer = require('react-hot-loader').AppContainer;
-
 const render = (Component) => {
     ReactDOM.render(
-        React.createElement(AppContainer, null, React.createElement(Component)),
+        <AppContainer><Component /></AppContainer>,
         document.getElementById('root')
     );
 }
