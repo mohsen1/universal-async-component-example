@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import App from './components/App';
+declare var module: NodeModule & { hot: any };
 
 const render = (Component) => {
     ReactDOM.render(
@@ -11,9 +11,7 @@ const render = (Component) => {
     );
 }
 
-render(App);
-
-declare var module: NodeModule & { hot: any };
+render(require('./components/App.tsx').default);
 
 if (module.hot) {
     module.hot.accept('./components/App.tsx', () => {

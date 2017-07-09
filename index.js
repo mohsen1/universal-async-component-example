@@ -1,6 +1,4 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
 
 const app = express();
 
@@ -28,9 +26,11 @@ if (process.env.NODE_ENV === 'development') {
 } else {
 
 	const serveStatic = require('serve-static');
-	const index = fs.readFileSync(path.join(__dirname, 'dist', 'index.html')).toString();
-	app.use('/assets', serveStatic(path.join(__dirname, 'dist')))
-	app.get('*', (_, res) => res.send(index));
+	const serverRenderer = require('./dist/server.js').default;
+	const clientStats = require('./dist/client-stats.json');
+	const serverStats = require('./dist/server-stats.json');
+	app.use('/assets', serveStatic('dist'));
+	app.use(serverRenderer({ clientStats, serverStats }))
 }
 
 const port = process.env.PORT || 3000;

@@ -3,6 +3,7 @@ import * as webpack from 'webpack';
 import * as _ from 'lodash';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
+const {StatsWriterPlugin} = require('webpack-stats-plugin');
 
 const dist = path.join(__dirname, 'dist');
 
@@ -73,6 +74,8 @@ export const clientConfig: Configuration = {
                 showErrors: process.env.NODE_ENV === 'development',
             }),
 
+            new StatsWriterPlugin({ filename: 'client-stats.json' }),
+
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
             // }),
@@ -102,6 +105,7 @@ const serverConfig: Configuration = {
         libraryTarget: 'commonjs2'
     },
     devtool: 'source-map',
+    plugins: [new StatsWriterPlugin({ filename: 'server-stats.json' })],
 };
 
 export default [
