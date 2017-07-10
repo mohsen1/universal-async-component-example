@@ -61,7 +61,7 @@ export const clientConfig: Configuration = {
     module: { rules },
     output: {
         path: dist,
-        filename: 'client.js',
+        filename: '[name].js',
         publicPath: '/assets/', // TODO: use process.env.PUBLIC_PATH or something
     },
     devtool: 'source-map',
@@ -76,6 +76,13 @@ export const clientConfig: Configuration = {
             }),
 
             new StatsWriterPlugin({ filename: 'client-stats.json' }),
+
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'vendor',
+                minChunks(module) {
+                    return typeof module.context === 'string' && module.context.indexOf('node_modules') > -1;
+                },
+            }),
 
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),

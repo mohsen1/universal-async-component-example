@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Route, Link, RouteComponentProps } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
+
+import { Welcome, Counter } from 'components';
 
 export default class App extends React.Component {
     render() {
@@ -16,18 +18,3 @@ export default class App extends React.Component {
     }
 }
 
-class Counter extends React.Component<{} & RouteComponentProps<{}>, {count: number;}> {
-    state = { count: 0 };
-    increment = () => {
-        this.setState({ count: this.state.count + 1 });
-    }
-    render() {
-        return (<div onClick={this.increment}>{this.state.count}</div>);
-    }
-}
-
-class Welcome extends React.Component<RouteComponentProps<{}>> {
-    render() {
-        return (<h1>Welcome!</h1>);
-    }
-}
