@@ -6,6 +6,7 @@ import * as webpack from 'webpack';
 import * as cheerio from 'cheerio';
 // import * as MemoryFileSystem from 'memory-fs';
 import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom';
 
 
 import App from './components/App';
@@ -27,16 +28,25 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
     }
 
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        const context: { url?: string; } = {};
+        const app = (
+            <StaticRouter context={context} location={req.url}>
+                <App />
+            </StaticRouter>
+        );
+
+        if (context.url) {
+            return res.redirect(301, context.url);
+        }
 
         if (process.env.NODE_ENV === 'development') {
             const indexPath = path.join(currentDirectory, 'dist', 'index.html');
             html = fileSystem.readFileSync(indexPath).toString();
         }
 
-        const $ = cheerio.load(html);
-
         // populate the app content...
-        $('#root').html(renderToString(<App />));
+        const $ = cheerio.load(html);
+        $('#root').html(renderToString(app));
 
         res.status(200).send($.html());
     };
