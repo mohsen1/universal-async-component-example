@@ -1,9 +1,12 @@
 {
     "compilerOptions": {
-        "target": "es2015",
+        "target": "es5",
+        "module": "commonjs",
         "jsx": "react",
+        "sourceMap": true,
         "types": [
-            "node"
+            "node",
+            "webpack-env"
         ]
     }
 }

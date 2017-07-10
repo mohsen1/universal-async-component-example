@@ -11,7 +11,7 @@ const rules: webpack.Rule[] = [
     {
         test: /(\.ts|\.tsx)$/,
         get loaders() {
-            const loaders = ['ts-loader'];
+            const loaders = ['awesome-typescript-loader'];
             if (process.env.NODE_ENV === 'development') {
                 loaders.unshift('react-hot-loader/webpack');
             }
