@@ -2,9 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-declare var module: NodeModule & { hot: any };
-
-const render = (Component) => {
+const render = (Component: React.StatelessComponent) => {
     ReactDOM.render(
         <AppContainer><Component /></AppContainer>,
         document.getElementById('root')

@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as express from 'express';
 import * as webpack from 'webpack';
 import * as cheerio from 'cheerio';
+import * as _ from 'lodash';
 import { renderToString } from 'react-dom/server';
 
 import App from './components/App';
@@ -43,10 +44,10 @@ function getDevelopmentIndex(stats: any) {
     // Find a way to use that generated html
     const index = fs.readFileSync('./src/index.html').toString();
     const $ = cheerio.load(index);
-    const assets = stats.assets;
+    const assets: { name: string; }[] = stats.assets;
     const publicPath = stats.publicPath;
-    const cssAssets = assets.filter(({name}) => name.endsWith('.css'));
-    const jsAssets = assets.filter(({name}) => name.endsWith('.js'));
+    const cssAssets = assets.filter(({name}) => _.endsWith(name, '.css'));
+    const jsAssets = assets.filter(({name}) => _.endsWith(name, '.js'));
     const cssTags = cssAssets.map(({name}) => `<link href="${publicPath}${name}" type="stylesheet" />`);
     const jsTags = jsAssets.map(({name}) => `<script src="${publicPath}${name}"></script>`);
     $('body').append(cssTags.join(''));

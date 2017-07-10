@@ -4,6 +4,8 @@
         "module": "commonjs",
         "jsx": "react",
         "sourceMap": true,
+        "outDir": "dist",
+        "strict": true,
         "types": [
             "node",
             "webpack-env"
