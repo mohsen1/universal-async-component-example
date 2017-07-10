@@ -1,12 +1,17 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "commonjs",
+        "module": "esnext",
         "jsx": "react",
         "sourceMap": true,
         "outDir": "dist",
         "strict": true,
         "baseUrl": "src",
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "es2015",
+            "dom"
+        ],
         "types": [
             "node",
             "webpack-env"

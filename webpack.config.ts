@@ -29,6 +29,7 @@ const rules: webpack.Rule[] = [
 const resolve: webpack.Resolve = {
     modules: ['src', 'node_modules'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    mainFields: ['browser', 'module', 'main'],
 };
 
 const htmlMinifyConfig: htmlWebpackPlugin.MinifyConfig = {
@@ -62,6 +63,7 @@ export const clientConfig: Configuration = {
     output: {
         path: dist,
         filename: '[name].js',
+        chunkFilename: '[name].bundle.js',
         publicPath: '/assets/', // TODO: use process.env.PUBLIC_PATH or something
     },
     devtool: 'source-map',
@@ -74,16 +76,13 @@ export const clientConfig: Configuration = {
                 hash: false,
                 showErrors: process.env.NODE_ENV === 'development',
             }),
-
             new StatsWriterPlugin({ filename: 'client-stats.json' }),
-
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks(module) {
                     return typeof module.context === 'string' && module.context.indexOf('node_modules') > -1;
                 },
             }),
-
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
             // }),

@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as express from 'express';
 import * as webpack from 'webpack';
 import * as cheerio from 'cheerio';
-// import * as MemoryFileSystem from 'memory-fs';
+import MemoryFileSystem from 'memory-fs';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ import App from './components/App';
 interface ServerRendererArguments {
     clientStats: webpack.Stats;
     serverStats: webpack.Stats;
-    fileSystem: any; // MemoryFileSystem; // See https://github.com/DefinitelyTyped/DefinitelyTyped/pull/17889
+    fileSystem: MemoryFileSystem;
     currentDirectory: string;
 }
 
@@ -42,6 +42,10 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
         if (process.env.NODE_ENV === 'development') {
             const indexPath = path.join(currentDirectory, 'dist', 'index.html');
             html = fileSystem.readFileSync(indexPath).toString();
+        }
+
+        if (html === '') {
+            throw new ReferenceError('Could not find index.html to render');
         }
 
         // populate the app content...

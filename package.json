@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "scripts": {
     "clean": "rimraf dist",
-    "start": "NODE_ENV=development node index.js",
+    "start": "NODE_ENV=development TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' node index.js",
     "start:prod": "NODE_ENV=production node index.js",
     "prebuild": "npm run clean",
-    "build": "webpack",
+    "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack",
     "build:prod": "NODE_ENV=production npm run build"
   },
   "author": "Mohsen Azimi <me@azimi.me>",
@@ -20,6 +20,7 @@
     "@types/react": "^15.0.35",
     "@types/react-dom": "^15.5.1",
     "@types/react-hot-loader": "^3.0.3",
+    "@types/react-loadable": "^4.0.1",
     "@types/react-router-dom": "^4.0.6",
     "@types/serve-static": "^1.7.31",
     "@types/webpack": "^3.0.2",
@@ -35,6 +36,7 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-hot-loader": "^3.0.0-beta.7",
+    "react-loadable": "^4.0.3",
     "react-router-dom": "^4.1.1",
     "rimraf": "^2.6.1",
     "serve-static": "^1.12.3",
