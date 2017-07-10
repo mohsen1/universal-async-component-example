@@ -21,7 +21,12 @@ if (process.env.NODE_ENV === 'development') {
 
 	app.use(devMiddleware);
 	app.use(webpackHotMiddleWare(clientCompiler));
-	app.use(webpackHotServerMiddleware(compiler));
+	app.use(webpackHotServerMiddleware(compiler, {serverRendererOptions: {
+		// Send client compiler FS for reading index.html for emitted assets
+		fileSystem: clientCompiler.outputFileSystem,
+		// Helps with finding the output folder in memory-fs
+		currentDirectory: __dirname,
+	}}));
 
 } else {
 
