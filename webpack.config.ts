@@ -112,7 +112,10 @@ const serverConfig: Configuration = {
         libraryTarget: 'commonjs2'
     },
     devtool: 'source-map',
-    plugins: [new StatsWriterPlugin({ filename: 'server-stats.json' })],
+    plugins: [
+        new StatsWriterPlugin({ filename: 'server-stats.json' }),
+        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1})
+    ],
 };
 
 export default [
