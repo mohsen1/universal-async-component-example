@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { Route, Link } from 'react-router-dom';
 
-import { LoadingComponentProps } from 'react-loadable';
-const Loadable = require('react-loadable');
+import Loadable, { LoadingComponentProps } from 'react-loadable';
+import Welcome from 'components/Welcome';
 
 const Loading = ({ isLoading }: LoadingComponentProps) => <div>Loading...{isLoading}</div>;
-
-const LoadableWelcome = Loadable({
-    loader: () => import('components/Welcome'),
-    loading: Loading,
-});
 
 const LoadableCounter = Loadable({
     loader: () => import('components/Counter'),
@@ -24,7 +19,7 @@ export default class App extends React.Component {
                     <li><Link to={'/'}>Home</Link></li>
                     <li><Link to={'/counter'}>Counter</Link></li>
                 </ul>
-                <Route exact path={'/'} component={LoadableWelcome} />
+                <Route exact path={'/'} component={Welcome} />
                 <Route exact path={'/counter'} component={LoadableCounter} />
             </div>
         );
