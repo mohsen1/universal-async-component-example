@@ -42,6 +42,7 @@ const htmlMinifyConfig: htmlWebpackPlugin.MinifyConfig = {
 
 interface Configuration extends webpack.Configuration {
     name: string;
+    target: any;
 }
 
 export const clientConfig: Configuration = {
@@ -83,6 +84,11 @@ export const clientConfig: Configuration = {
                     return typeof module.context === 'string' && module.context.indexOf('node_modules') > -1;
                 },
             }),
+            new webpack.optimize.CommonsChunkPlugin({
+                names: ['bootstrap'],
+                filename: '[name].js',
+                minChunks: Infinity
+            }),
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
             // }),
@@ -114,7 +120,7 @@ const serverConfig: Configuration = {
     devtool: 'source-map',
     plugins: [
         new StatsWriterPlugin({ filename: 'server-stats.json' }),
-        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1})
+        // new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1})
     ],
 };
 
