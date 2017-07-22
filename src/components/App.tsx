@@ -10,8 +10,8 @@ const LoadableCounter = Loadable({
     loader: () => {
         const moduleId = require.resolveWeak('components/Counter');
         if (__webpack_modules__[moduleId]) {
-            if ((global as any).reportModule) {
-                (global as any).reportModule(moduleId)
+            if (global.__webpack_report_dynamic_module__) {
+                global.__webpack_report_dynamic_module__(moduleId)
             }
             const moduleObject = __webpack_require__(moduleId);
             return moduleObject.Counter;
