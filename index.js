@@ -16,7 +16,8 @@ if (process.env.NODE_ENV === 'development') {
 
 	const devMiddleware = webpackDevMiddleware(compiler, {
 		noInfo: true,
-		publicPath: clientConfig.output.publicPath
+		publicPath: clientConfig.output.publicPath,
+		serverSideRender: true,
 	});
 
 	app.use(devMiddleware);
