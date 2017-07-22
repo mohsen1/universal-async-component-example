@@ -1,13 +1,24 @@
 import * as React from 'react';
 import { Route, Link } from 'react-router-dom';
 
-import Loadable, { LoadingComponentProps } from 'react-loadable';
 import Welcome from 'components/Welcome';
 
-const Loading = ({ isLoading }: LoadingComponentProps) => <div>Loading...{isLoading}</div>;
+import { Loadable } from './Loadable'
+import { Loading } from './Loading'
 
 const LoadableCounter = Loadable({
-    loader: () => import('components/Counter'),
+    loader: () => {
+        const moduleId = require.resolveWeak('components/Counter');
+        if (__webpack_modules__[moduleId]) {
+            if ((global as any).reportModule) {
+                (global as any).reportModule(moduleId)
+            }
+            const moduleObject = __webpack_require__(moduleId);
+            return moduleObject.Counter;
+        }
+
+        return import('components/Counter').then(ns => ns.Counter)
+    },
     loading: Loading,
 });
 

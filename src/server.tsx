@@ -8,7 +8,6 @@ import MemoryFileSystem from 'memory-fs';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 
-
 import App from './components/App';
 
 interface ServerRendererArguments {
@@ -29,6 +28,17 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
 
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const context: { url?: string; } = {};
+        const originalRequire = __webpack_require__;
+        const chunksToInclude: number[] = [];
+        (global as any).reportModule = function (moduleId: number) {
+            (clientStats as any).chunks.forEach((chunk: any) => {
+                chunk.modules.forEach((module: any) => {
+                    if (module.id === moduleId) {
+                        chunksToInclude.push(chunk.id);
+                    }
+                });
+            });
+        }
         const app = (
             <StaticRouter context={context} location={req.url}>
                 <App />
@@ -51,6 +61,11 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
         // populate the app content...
         const $ = cheerio.load(html);
         $('#root').html(renderToString(app));
+        chunksToInclude.forEach(chunksId => {
+            $('script[src="/assets/bootstrap.js"]').after(
+                $(`<script type="text/javascript" src="assets/${chunksId}.bundle.js"></script>`)
+            )
+        })
 
         res.status(200).send($.html());
     };

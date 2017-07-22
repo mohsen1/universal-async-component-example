@@ -89,6 +89,7 @@ export const clientConfig: Configuration = {
                 filename: '[name].js',
                 minChunks: Infinity
             }),
+            new webpack.NamedModulesPlugin(),
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
             // }),
@@ -97,8 +98,7 @@ export const clientConfig: Configuration = {
             return [
                 ...basePlugins,
                 new webpack.HotModuleReplacementPlugin(),
-                new webpack.NamedModulesPlugin(),
-                // new webpack.NoErrorsPlugin(),
+                new webpack.NoEmitOnErrorsPlugin(),
             ];
         }
         return basePlugins;
@@ -120,7 +120,8 @@ const serverConfig: Configuration = {
     devtool: 'source-map',
     plugins: [
         new StatsWriterPlugin({ filename: 'server-stats.json' }),
-        // new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1})
+        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1}),
+        new webpack.NamedModulesPlugin(),
     ],
 };
 
