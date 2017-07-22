@@ -77,7 +77,7 @@ export const clientConfig: Configuration = {
                 hash: false,
                 showErrors: process.env.NODE_ENV === 'development',
             }),
-            new StatsWriterPlugin({ filename: 'client-stats.json' }),
+            new StatsWriterPlugin({ filename: 'client-stats.json', fields: ['chunks'] }),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks(module) {
