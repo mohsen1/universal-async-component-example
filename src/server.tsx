@@ -10,7 +10,7 @@ import { StaticRouter } from 'react-router-dom';
 
 import App from './components/App';
 
-import { CaptureChunks } from 'UniversalLazyComponent/CaptureChunks';
+import { CaptureChunks } from 'UniversalAsyncComponent/CaptureChunks';
 
 interface ServerRendererArguments {
     clientStats: any;
@@ -57,7 +57,7 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
         $('#root').html(renderToString(app));
         additionalChunks.forEach(chunksId => {
             $('script[src="/assets/bootstrap.js"]').after(
-                $(`<script type="text/javascript" src="assets/${chunksId}.bundle.js"></script>`)
+                $(`<script type="text/javascript" src="/assets/${chunksId}.bundle.js"></script>`)
             )
         })
 

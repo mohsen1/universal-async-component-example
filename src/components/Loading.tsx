@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { LoadingComponentProps } from 'react-loadable';
+import { LoadingProps } from 'UniversalAsyncComponent';
 
 /**
  * Loading component. Renders a div with loading message
  */
-export const Loading: React.StatelessComponent<LoadingComponentProps> = ({ isLoading, error, timedOut }) => {
+export const Loading: React.StatelessComponent<LoadingProps> = ({ isLoading, error, timedOut }) => {
     if (timedOut) {
         return (<div>Still loading...</div>);
     }

@@ -6,14 +6,27 @@ const nodeExternals = require('webpack-node-externals');
 const { StatsWriterPlugin } = require('webpack-stats-plugin');
 
 const dist = path.join(__dirname, 'dist');
-
+/*
+ *       const __module_id__ = require.resolveWeak('path/to/hello');
+ *       if (__webpack_modules__ && __webpack_modules__[__module_id__]) {
+ *          if (typeof global.__webpack_report_dynamic_module__ === 'function') {
+ *             global.__webpack_report_dynamic_module__(__module_id__)
+ *          }
+ *          return __webpack_require__(__module_id__);
+ *       }
+ *       return import('path/to/hello')
+ */
 const rules: webpack.Rule[] = [
     {
         test: /(\.ts|\.tsx)$/,
-        get loaders() {
-            const loaders = ['awesome-typescript-loader'];
+        get use() {
+            const loaders: webpack.Loader[] = [
+                {
+                    loader: 'awesome-typescript-loader',
+                },
+            ];
             if (process.env.NODE_ENV === 'development') {
-                loaders.unshift('react-hot-loader/webpack');
+                loaders.unshift({ loader: 'react-hot-loader/webpack' });
             }
             return loaders;
         },
