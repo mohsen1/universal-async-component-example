@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
 const { StatsWriterPlugin } = require('webpack-stats-plugin');
-const StringReplacePlugin = require('string-replace-webpack-plugin');
 import { stringReplaceLoaderOptions } from 'universal-async-component';
 
 const dist = path.join(__dirname, 'dist');
@@ -73,9 +72,9 @@ export const clientConfig: Configuration = {
     module: { rules },
     output: {
         path: dist,
-        filename: '[name].js',
-        chunkFilename: '[name].bundle.js',
-        publicPath: '/assets/', // TODO: use process.env.PUBLIC_PATH or something
+        filename: '[name]-[hash].js',
+        chunkFilename: '[name]-[chunkhash].chunk.js',
+        publicPath: process.env.PUBLIC_PATH  || '/assets/',
     },
     devtool: 'source-map',
     get plugins() {
@@ -87,7 +86,10 @@ export const clientConfig: Configuration = {
                 hash: false,
                 showErrors: process.env.NODE_ENV === 'development',
             }),
-            new StatsWriterPlugin({ filename: 'client-stats.json', fields: ['chunks', 'publicPath'] }),
+            new StatsWriterPlugin({
+                filename: 'client-stats.json',
+                fields: ['chunks', 'publicPath', 'assets'],
+            }),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks(module) {
@@ -96,7 +98,7 @@ export const clientConfig: Configuration = {
             }),
             new webpack.optimize.CommonsChunkPlugin({
                 names: ['bootstrap'],
-                filename: '[name].js',
+                filename: 'webpack-bootstrap-[hash].js',
                 minChunks: Infinity
             }),
             new webpack.NamedModulesPlugin(),
@@ -129,7 +131,6 @@ const serverConfig: Configuration = {
     },
     devtool: 'source-map',
     plugins: [
-        new StatsWriterPlugin({ filename: 'server-stats.json' }),
         new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1}),
         new webpack.NamedModulesPlugin(),
     ],

@@ -34,9 +34,8 @@ if (process.env.NODE_ENV === 'development') {
 	const serveStatic = require('serve-static');
 	const serverRenderer = require('./dist/server.js').default;
 	const clientStats = require('./dist/client-stats.json');
-	const serverStats = require('./dist/server-stats.json');
 	app.use('/assets', serveStatic('dist'));
-	app.use(serverRenderer({ clientStats, serverStats }))
+	app.use(serverRenderer({ clientStats }))
 }
 
 const port = process.env.PORT || 3000;

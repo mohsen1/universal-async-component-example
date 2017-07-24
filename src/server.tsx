@@ -14,7 +14,6 @@ import { CaptureChunks } from 'universal-async-component';
 
 interface ServerRendererArguments {
     clientStats: any;
-    serverStats: any;
     fileSystem: MemoryFileSystem;
     currentDirectory: string;
 }
@@ -22,7 +21,7 @@ interface ServerRendererArguments {
 /**
  * Universal render function in development mode
  */
-export default function serverRenderer({ clientStats, serverStats, fileSystem, currentDirectory }: ServerRendererArguments) {
+export default function serverRenderer({ clientStats, fileSystem, currentDirectory }: ServerRendererArguments) {
     let html = '';
     if (process.env.NODE_ENV === 'production') {
         html = fs.readFileSync('./dist/index.html').toString();
@@ -55,11 +54,25 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
         // populate the app content...
         const $ = cheerio.load(html);
         $('#root').html(renderToString(app));
-        additionalChunks.forEach(chunksId => {
-            $('script[src="/assets/bootstrap.js"]').after(
-                $(`<script type="text/javascript" src="/assets/${chunksId}.bundle.js"></script>`)
-            )
-        })
+
+        // add additional chunk scripts
+        try {
+            const bootstrapScriptName = clientStats.assetsByChunkName.bootstrap
+                .filter((name: string) => name.endsWith('.js'))[0];
+            const bootstrapScriptSrc = clientStats.publicPath + bootstrapScriptName;
+            const bootstrapScript = $(`script[src="${bootstrapScriptSrc}"]`);
+            additionalChunks.forEach(chunksId => {
+                const chunkName = clientStats.assets.filter((asset: any) => {
+                    return asset.name.startsWith(chunksId + '-') && asset.name.endsWith('.chunk.js');
+                })[0].name;
+                const src = clientStats.publicPath + chunkName;
+                bootstrapScript.after(
+                    $(`<script type="text/javascript" src="${src}"></script>`)
+                );
+            })
+        } catch (e) {
+            console.error(e);
+        }
 
         res.status(200).send($.html());
     };
