@@ -1,7 +1,7 @@
 # [Universal Async Component](https://github.com/mohsen1/universal-async-component-example) Example
 
 ## What is this?
-[Universal Async Component](https://github.com/mohsen1/universal-async-component-example) solves the problem of code-splitting and server-side rendering "flash of contents". This is a minimal example of how to use it.
+[Universal Async Component](https://github.com/mohsen1/universal-async-component) solves the problem of code-splitting and server-side rendering "flash of contents". This is a minimal example of how to use it.
 
 ## What's included
 * **React Router 4**
