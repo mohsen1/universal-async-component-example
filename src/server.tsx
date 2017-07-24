@@ -8,12 +8,12 @@ import MemoryFileSystem from 'memory-fs';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 
-
 import App from './components/App';
 
+import { CaptureChunks } from 'universal-async-component';
+
 interface ServerRendererArguments {
-    clientStats: webpack.Stats;
-    serverStats: webpack.Stats;
+    clientStats: any;
     fileSystem: MemoryFileSystem;
     currentDirectory: string;
 }
@@ -21,7 +21,7 @@ interface ServerRendererArguments {
 /**
  * Universal render function in development mode
  */
-export default function serverRenderer({ clientStats, serverStats, fileSystem, currentDirectory }: ServerRendererArguments) {
+export default function serverRenderer({ clientStats, fileSystem, currentDirectory }: ServerRendererArguments) {
     let html = '';
     if (process.env.NODE_ENV === 'production') {
         html = fs.readFileSync('./dist/index.html').toString();
@@ -29,10 +29,13 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
 
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const context: { url?: string; } = {};
+        const additionalChunks: string[] = [];
         const app = (
-            <StaticRouter context={context} location={req.url}>
-                <App />
-            </StaticRouter>
+            <CaptureChunks statsChunks={clientStats.chunks} additionalChunks={additionalChunks}>
+                <StaticRouter context={context} location={req.url}>
+                    <App />
+                </StaticRouter>
+            </CaptureChunks>
         );
 
         if (context.url) {
@@ -51,6 +54,25 @@ export default function serverRenderer({ clientStats, serverStats, fileSystem, c
         // populate the app content...
         const $ = cheerio.load(html);
         $('#root').html(renderToString(app));
+
+        // add additional chunk scripts
+        try {
+            const bootstrapScriptName = clientStats.assetsByChunkName.bootstrap
+                .filter((name: string) => name.endsWith('.js'))[0];
+            const bootstrapScriptSrc = clientStats.publicPath + bootstrapScriptName;
+            const bootstrapScript = $(`script[src="${bootstrapScriptSrc}"]`);
+            additionalChunks.forEach(chunksId => {
+                const chunkName = clientStats.assets.filter((asset: any) => {
+                    return asset.name.startsWith(chunksId + '-') && asset.name.endsWith('.chunk.js');
+                })[0].name;
+                const src = clientStats.publicPath + chunkName;
+                bootstrapScript.after(
+                    $(`<script type="text/javascript" src="${src}"></script>`)
+                );
+            })
+        } catch (e) {
+            console.error(e);
+        }
 
         res.status(200).send($.html());
     };

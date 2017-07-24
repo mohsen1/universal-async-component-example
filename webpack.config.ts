@@ -4,16 +4,25 @@ import * as _ from 'lodash';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
 const { StatsWriterPlugin } = require('webpack-stats-plugin');
+import { stringReplaceLoaderOptions } from 'universal-async-component';
 
 const dist = path.join(__dirname, 'dist');
 
 const rules: webpack.Rule[] = [
     {
         test: /(\.ts|\.tsx)$/,
-        get loaders() {
-            const loaders = ['awesome-typescript-loader'];
+        get use() {
+            const loaders: webpack.Loader[] = [
+                {
+                    loader: 'string-replace-loader',
+                    options: stringReplaceLoaderOptions,
+                },
+                {
+                    loader: 'awesome-typescript-loader',
+                },
+            ];
             if (process.env.NODE_ENV === 'development') {
-                loaders.unshift('react-hot-loader/webpack');
+                loaders.unshift({ loader: 'react-hot-loader/webpack' });
             }
             return loaders;
         },
@@ -63,9 +72,9 @@ export const clientConfig: Configuration = {
     module: { rules },
     output: {
         path: dist,
-        filename: '[name].js',
-        chunkFilename: '[name].bundle.js',
-        publicPath: '/assets/', // TODO: use process.env.PUBLIC_PATH or something
+        filename: '[name]-[hash].js',
+        chunkFilename: '[name]-[chunkhash].chunk.js',
+        publicPath: process.env.PUBLIC_PATH  || '/assets/',
     },
     devtool: 'source-map',
     get plugins() {
@@ -77,7 +86,10 @@ export const clientConfig: Configuration = {
                 hash: false,
                 showErrors: process.env.NODE_ENV === 'development',
             }),
-            new StatsWriterPlugin({ filename: 'client-stats.json' }),
+            new StatsWriterPlugin({
+                filename: 'client-stats.json',
+                fields: ['chunks', 'publicPath', 'assets'],
+            }),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks(module) {
@@ -86,9 +98,10 @@ export const clientConfig: Configuration = {
             }),
             new webpack.optimize.CommonsChunkPlugin({
                 names: ['bootstrap'],
-                filename: '[name].js',
+                filename: 'webpack-bootstrap-[hash].js',
                 minChunks: Infinity
             }),
+            new webpack.NamedModulesPlugin(),
             // new webpack.ProvidePlugin({
             //     'process.env': JSON.stringify(_.pick(process.env, ['NODE_ENV'])),
             // }),
@@ -97,8 +110,7 @@ export const clientConfig: Configuration = {
             return [
                 ...basePlugins,
                 new webpack.HotModuleReplacementPlugin(),
-                new webpack.NamedModulesPlugin(),
-                // new webpack.NoErrorsPlugin(),
+                new webpack.NoEmitOnErrorsPlugin(),
             ];
         }
         return basePlugins;
@@ -119,8 +131,8 @@ const serverConfig: Configuration = {
     },
     devtool: 'source-map',
     plugins: [
-        new StatsWriterPlugin({ filename: 'server-stats.json' }),
-        // new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1})
+        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1}),
+        new webpack.NamedModulesPlugin(),
     ],
 };
 

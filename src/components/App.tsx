@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Route, Link } from 'react-router-dom';
 
-import Loadable, { LoadingComponentProps } from 'react-loadable';
 import Welcome from 'components/Welcome';
 
-const Loading = ({ isLoading }: LoadingComponentProps) => <div>Loading...{isLoading}</div>;
+import { getComponentAsync } from 'universal-async-component';
+import { Loading } from './Loading'
 
-const LoadableCounter = Loadable({
+const AsyncCounter = getComponentAsync({
+    exportKey: 'Counter',
     loader: () => import('components/Counter'),
     loading: Loading,
 });
@@ -20,7 +21,7 @@ export default class App extends React.Component {
                     <li><Link to={'/counter'}>Counter</Link></li>
                 </ul>
                 <Route exact path={'/'} component={Welcome} />
-                <Route exact path={'/counter'} component={LoadableCounter} />
+                <Route exact path={'/counter'} component={AsyncCounter} />
             </div>
         );
     }
