@@ -1,4 +1,4 @@
-# [Universal Async Component](https://github.com/mohsen1/universal-async-component-example) Example
+# [Universal Async Component](https://github.com/mohsen1/universal-async-component) Example
 
 ## What is this?
 [Universal Async Component](https://github.com/mohsen1/universal-async-component) solves the problem of code-splitting and server-side rendering "flash of contents". This is a minimal example of how to use it.
