@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LoadingProps } from 'UniversalAsyncComponent';
+import { LoadingProps } from 'universal-async-component';
 
 /**
  * Loading component. Renders a div with loading message

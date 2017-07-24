@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
 const nodeExternals = require('webpack-node-externals');
 const { StatsWriterPlugin } = require('webpack-stats-plugin');
+const StringReplacePlugin = require('string-replace-webpack-plugin');
+import { stringReplaceLoaderOptions } from 'universal-async-component';
 
 const dist = path.join(__dirname, 'dist');
 
@@ -12,6 +14,10 @@ const rules: webpack.Rule[] = [
         test: /(\.ts|\.tsx)$/,
         get use() {
             const loaders: webpack.Loader[] = [
+                {
+                    loader: 'string-replace-loader',
+                    options: stringReplaceLoaderOptions,
+                },
                 {
                     loader: 'awesome-typescript-loader',
                 },
@@ -81,7 +87,7 @@ export const clientConfig: Configuration = {
                 hash: false,
                 showErrors: process.env.NODE_ENV === 'development',
             }),
-            new StatsWriterPlugin({ filename: 'client-stats.json', fields: ['chunks'] }),
+            new StatsWriterPlugin({ filename: 'client-stats.json', fields: ['chunks', 'publicPath'] }),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks(module) {

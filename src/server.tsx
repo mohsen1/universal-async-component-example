@@ -10,7 +10,7 @@ import { StaticRouter } from 'react-router-dom';
 
 import App from './components/App';
 
-import { CaptureChunks } from 'UniversalAsyncComponent/CaptureChunks';
+import { CaptureChunks } from 'universal-async-component';
 
 interface ServerRendererArguments {
     clientStats: any;
