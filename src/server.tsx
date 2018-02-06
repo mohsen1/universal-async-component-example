@@ -5,7 +5,7 @@ import * as express from 'express';
 import * as webpack from 'webpack';
 import * as cheerio from 'cheerio';
 import MemoryFileSystem from 'memory-fs';
-import { renderToString } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 
 import App from './components/App';
@@ -53,7 +53,7 @@ export default function serverRenderer({ clientStats, fileSystem, currentDirecto
 
         // populate the app content...
         const $ = cheerio.load(html);
-        $('#root').html(renderToString(app));
+        $('#root').html(renderToStaticMarkup(app));
 
         // add additional chunk scripts
         try {

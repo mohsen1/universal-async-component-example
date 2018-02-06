@@ -4,7 +4,7 @@ import { AppContainer } from 'react-hot-loader';
 import { BrowserRouter } from 'react-router-dom';
 
 const render = (Component: React.StatelessComponent) => {
-    ReactDOM.render(
+    ReactDOM.hydrate(
         <AppContainer>
             <BrowserRouter>
                 <Component />
